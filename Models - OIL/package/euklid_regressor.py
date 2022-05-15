@@ -161,29 +161,115 @@ def scale_back_pct(pred, close):
         predict.append(pred[i]*list(close)[i-1]+list(close)[i-1])
     return predict
 
-def long_equity(prediction, close,commission= 0.000):
+def long_equity(prediction, close, commission = 0.00):
     long = [close[0]]
     for i in range(1,len(prediction)-1):
-        if prediction[i] > 0:
-            long.append(close[i] - close[i-1] - close[i-1]*commission)
+        if prediction[i] == 1:
+            long.append(long[i-1] + close[i] - close[i-1] - close[i-1]*commission)
         else:
-            long.append(0)
+            long.append(long[i-1] + 0)
     return long
 
-def short_equity(prediction, close,commission = 0.000):
+def short_equity(prediction, close, commission = 0.00):
     short = [close[0]]
     for i in range(1,len(prediction)-1):
-        if prediction[i] < 0:
-            short.append(close[i-1] - close[i] - close[i-1]*commission)
+        if prediction[i] == 0:
+            short.append(short[i-1] + close[i-1] - close[i] - close[i-1]*commission)
         else:
-            short.append(0)
+            short.append(short[i-1] + 0)
     return short  
 
-def total_equity(prediction, close,commission = 0.000):
+def total_equity(prediction, close, commission = 0.00):
     total = [close[0]]
     for i in range(1,len(prediction)-1):
-        if prediction[i] > 0:
-            total.append(close[i] - close[i-1] - close[i-1]*commission)
+        if prediction[i] == 1:
+            total.append(total[i-1] + close[i] - close[i-1] - close[i-1]*commission)
         else:
-            total.append(close[i-1] - close[i] - close[i-1]*commission)
+            total.append(total[i-1] + close[i-1] - close[i] - close[i-1]*commission)
     return total
+
+def percentage_returns(price):
+    perc = [0]
+    for i in range(1,len(price)):
+        perc.append(perc[i-1] + ((price[i]-price[i-1])/price[0])*100)
+    return perc
+
+def percentage_returns_for_dd(price):
+    perc = [0]
+    for i in range(1,len(price)):
+        perc.append(perc[i-1] + ((price[i]-price[i-1])/price[i-1])*100)
+    return perc
+
+def max_drawdown(equity):
+    dd = 0
+    drawdown = [0]
+    for i in range(1,len(equity)):
+        if equity[i] < equity[i-1]:
+            dd += equity[i-1] - equity[i]
+            drawdown.append(dd)
+        else:
+            drawdown.append(dd)
+            dd = 0
+    for i in range(1, len(drawdown)):
+        if drawdown[i] != 0:
+            drawdown[i] = drawdown[i] + drawdown[i-1]
+        else:
+            drawdown[i] = 0
+    Drawdown = [i for i in drawdown if i != 0]
+    return [max(Drawdown), np.mean(Drawdown), min(Drawdown)]
+
+def number_of_trades(equity, updown_pred):
+    count = 0
+    for i in range(1,len(equity)-1):
+        if (equity[i] != equity[i-1] and updown_pred[i] != updown_pred[i-1]):
+            count += 1
+    total_profit = float(equity[len(equity)-1] - equity[0])
+    average_profit = total_profit/count
+    return count 
+
+def number_of_winning_long_trades(equity, updown_pred):
+    long_results = []
+    profit_loss = 0
+    for i in range(1,len(equity)-1):
+        if (equity[i] != equity[i-1] and updown_pred[i] == updown_pred[i-1] and updown_pred[i] == 1):
+            profit_loss += equity[i] - equity[i-1]
+        if (equity[i] != equity[i-1] and updown_pred[i] != updown_pred[i-1]):
+            long_results.append(profit_loss)
+            profit_loss = 0
+    wins = [i for i in long_results if i > 0]
+    losses = [i for i in long_results if i < 0]
+    average_profit = np.mean(wins)
+    best_profit = np.max(wins)
+    worst_loss = np.min(losses)
+    average_loss = np.mean(losses)
+    profit_loss_ratio = np.abs(average_profit/average_loss)
+    return [len(wins), average_profit, average_loss, profit_loss_ratio, best_profit, worst_loss]
+
+def number_of_winning_short_trades(equity, updown_pred):
+    long_results = []
+    profit_loss = 0
+    for i in range(1,len(equity)-1):
+        if (equity[i] != equity[i-1] and updown_pred[i] == updown_pred[i-1] and updown_pred[i] == 0):
+            profit_loss += equity[i] - equity[i-1]
+        if (equity[i] != equity[i-1] and updown_pred[i] != updown_pred[i-1]):
+            long_results.append(profit_loss)
+            profit_loss = 0
+    wins = [i for i in long_results if i > 0]
+    losses = [i for i in long_results if i < 0]
+    average_profit = np.mean(wins)
+    best_profit = np.max(wins)
+    worst_loss = np.min(losses)
+    average_loss = np.mean(losses)
+    profit_loss_ratio = np.abs(average_profit/average_loss)
+    return [len(wins), average_profit, average_loss, profit_loss_ratio, best_profit, worst_loss]  
+
+def long_short_market_time(updown_pred):
+    long_days = 0
+    short_days = 0
+    for i in updown_pred:
+        if i > 0:
+            long_days += 1
+        else:
+            short_days += 1
+    return [long_days, short_days]
+    
