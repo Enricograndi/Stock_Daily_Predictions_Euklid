@@ -1,2 +1,13 @@
 # Stock_Daily_Predictions_Euklid
 Data Science Project work in collaboration with Euklid
+
+In a working paper published in April 2009 the Center for Financial Studies has investigated the extent to which the advent of Electronic Markets has facilitated the development of quantitative models for financial time series prediction and the possibility of direct execution of algorithmic strategies thanks to the development of applications able to execute orders on exchanges in an automated fashion. The researchers found out that on Deutsche B ̈orse trading engine there were on average more machines than humans operating within the week from October 8th to 12th, 2007.
+Definitions of Algorithmic Trading conceptualize it as the “computerized execution of financial instru- ments following pre-specified rules and guidelines” . The means through which autonomous execution is achieved are outside the scope of this report. Instead, our research will focus on the definition of the pre-specified rules that enable algorithmic trading. To define these rules, we need two essential components: a prediction on future price movements and a decision-making system to act on those predictions. The models that will be shown in the following sections are all based on the relatively recent field of Machine Learning. They apply both older and more recent models that are evaluated both in terms of their accuracy in predicting price movements as well as their ability to produce good results once simple trading rules are defined to act on prediction outputs.
+The data was collected from publicly available financial data in Yahoo website regarding four indexes: Nasdaq, IBM, Gold and WTI. The data imported contained High, Low, Open, Close, Adjusted Close and Volume values for each of the four indexes. The time interval chosen for the project goes from 23/08/2000 to 01/04/2022. The first part of the project focuses on technical indicators analysis and se- lection performed by Genetic Algorithm, a heuristic search method used for finding optimized solutions to search problems based on the theory of natural selection and evolutionary biology. We subsequently applied some machine learning algorithms to predict both on normalized and non-normalized data; some of the machine learning models include XGboost, Support Vector Machines and LSTM. The final step of the project was backtesting used to see how well the strategy or model performs ex-post.
+
+## Authors and acknowledgment
+Thank you all for the collaboration! Follow the authors on linkedin!
+
+- [**Enrico Grandi**](https://www.linkedin.com/in/enrico-grandi/)
+- [**Martina Crisafulli**](https://www.linkedin.com/in/martina-crisafulli-58a006209/)
+- [**Valerio Schettini**]
